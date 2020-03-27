@@ -1,0 +1,25 @@
+<!DOCTYPE <!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>WalkMap</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="css/main.css" />
+    <script src="main.js"></script>
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.51.0/mapbox-gl.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.51.0/mapbox-gl.css' rel='stylesheet' />
+
+</head>
+<body>
+    <div id='map' style='width: 800px; height: 600px;'></div>
+    <script>
+        mapboxgl.accessToken = 'pk.eyJ1IjoicGlsa2V5IiwiYSI6ImNqcDM1cHF3MDBlZDIza25yMHlhYnR3dWwifQ.qS0U2gRHtAZlBj-bvM6H8g';
+        var map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/mapbox/streets-v9'
+        });
+    </script>
+
+</body>
+</html>

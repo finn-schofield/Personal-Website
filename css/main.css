@@ -1,0 +1,22 @@
+
+canvas {
+    border:1px solid cadetblue;
+    border-width: 4px;
+    background-color:white;
+}
+
+body {
+    text-align: center;
+    padding: 40px;
+    background-color: rgb(230, 230, 230);
+}
+
+.title,
+.option {
+    font-family: Georgia, 'Times New Roman', Times, serif;
+}
+
+button {
+    font-size:15px;
+    text-align: center;
+}
