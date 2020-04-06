@@ -5,18 +5,29 @@ canvas {
     background-color:white;
 }
 
+
 body {
-    text-align: center;
+    font-family:"Century Gothic", Futura, sans-serif;
+    margin: 20px;
     padding: 40px;
-    background-color: rgb(230, 230, 230);
+    color: black;
+    background-color: white;
 }
 
-.title,
+.content-container {
+    background-color: rgb(73, 73, 73);
+    display:inline-block;
+    margin: 0 auto;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 90%;
+}
+
 .option {
-    font-family: Georgia, 'Times New Roman', Times, serif;
+    color: white;
 }
 
 button {
-    font-size:15px;
+    color:black;
     text-align: center;
 }
