@@ -35,7 +35,10 @@ class NumberButtons extends React.Component {
 class Square extends React.Component {
     
     render() {
-        let className = this.props.selected ? "square selected" : "square"
+        // let className = this.props.selected ? "square selected" : "square"
+        let className = "square";
+        if(this.props.selected) className += " selected";
+        if(this.props.permanent) className += " permanent";
         return (
             <button className={className} onClick={this.props.onClick}>
                 {this.props.value}
