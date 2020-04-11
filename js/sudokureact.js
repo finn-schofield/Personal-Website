@@ -1,7 +1,7 @@
 class NumberButton extends React.Component {
     render(){
         return (
-            <button className="number-button" onClick={this.props.onClick} >
+            <button className="btn btn-light" onClick={this.props.onClick} >
                 {this.props.value}
             </button>
         );
@@ -172,7 +172,7 @@ class Game extends React.Component {
                     />
                 </div>
                 <NumberButtons onClick={(i) => this.handleNumberButton(i)}/>
-                <button onClick={() => this.restart()}>{"1"}</button>
+                <button type="button" class="btn btn-light" onClick={() => this.restart()}>reset</button>
             </div>
         );
     }
