@@ -1,0 +1,101 @@
+body {
+    font: 14px "Century Gothic", Futura, sans-serif;
+    margin: 20px;
+  }
+  
+ol, ul {
+  padding-left: 30px;
+}
+
+.board-row:after {
+  clear: both;
+  content: "";
+  display: table-row-group;
+}
+
+.status {
+  margin-bottom: 10px;
+}
+
+.square {
+  background: #fff;
+  border: 1px solid #999;
+  float: left;
+  font-size: 24px;
+  font-weight: bold;
+  line-height: 34px;
+  height: 34px;
+  margin-right: -1px;
+  margin-top: -1px;
+  padding: 0;
+  text-align: center;
+  width: 34px;
+  
+}
+
+.square.selected{
+  background: #ddd;
+}
+
+.square:focus {
+  outline: none;
+}
+
+.kbd-navigation .square:focus {
+  
+  background: #ddd;
+}
+
+.game {
+  display: inline-block;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.game-info {
+  margin-left: 20px;
+}
+
+.game-board {
+  display: flex;
+}
+
+
+.number-buttons {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+  padding: 10px 0;
+  margin: 0 auto;
+}
+
+.number-button {
+  background: #fff;
+  color: rgb(78, 78, 78);
+  border: 1px solid black;
+  border-radius: 4px;
+  font-size: 24px;
+  font-weight: bold;
+  line-height: 34px;
+  height: 50px;
+  margin-top: -1px;
+  margin-right: -1px;
+  text-align: center;
+  width: 100%;
+}
+
+.number-button:hover {
+  background: rgb(205, 235, 255);
+}
+
+.number-button:focus {
+  outline:none;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  grid-gap: 1px 1px;
+}
+
+  
