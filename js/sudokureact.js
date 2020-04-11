@@ -53,7 +53,8 @@ class Board extends React.Component {
         }
         return (
             <Square
-                value={this.props.squares[row][col] == 0 ? null : this.props.squares[row][col]}
+                value={this.props.squares[row][col].value == 0 ? null : this.props.squares[row][col].value}
+                permanent={this.props.squares[row][col].permanent}
                 onClick={() => this.props.onClick(row, col)}
                 selected={selected}
             />
@@ -107,20 +108,24 @@ class Game extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            squares: easy,
+            squares: createBoard(easy),
             selected: [-1, -1],
         };
+        console.log(this.state.squares);
+    }
+
+    restart() {
+        this.setState({
+            squares: createBoard(easy),
+        });
     }
 
     handleKeyPress(e) {
         if(e.code.startsWith("Digit")){
             console.log(e.key)
             let num = e.key*1;
-            let squares = this.state.squares.slice();
-            squares[this.state.selected[0]][this.state.selected[1]] = num;
-            this.setState({
-                squares: squares,
-            });
+            
+            this.updateSquare(this.state.selected[0], this.state.selected[1], num);
 
         }
         
@@ -135,8 +140,14 @@ class Game extends React.Component {
     handleNumberButton(i) {
         if(this.state.selected[0] < 0 || this.state.selected[1] < 0) return;
 
-        let squares = this.state.squares.slice();
-        squares[this.state.selected[0]][this.state.selected[1]] = i;
+        this.updateSquare(this.state.selected[0], this.state.selected[1], i);
+    }
+
+    updateSquare(row, col, newValue){
+        if(this.state.squares[row][col].permanent) return;
+        
+        let squares = JSON.parse(JSON.stringify(this.state.squares))
+        squares[row][col].value = newValue;
         this.setState({
             squares: squares,
         });
@@ -161,11 +172,35 @@ class Game extends React.Component {
                     />
                 </div>
                 <NumberButtons onClick={(i) => this.handleNumberButton(i)}/>
+                <button onClick={() => this.restart()}>{"1"}</button>
             </div>
         );
     }
 }
-  
+
+function createBoard(values){
+    let board = [];
+    for(let row = 0; row < values.length; row++){
+        let newRow = [];
+        for(let col = 0; col < values[0].length; col++){
+            newRow.push({
+                value: values[row][col],
+                permanent: values[row][col] != 0,
+            });
+        }
+        board.push(newRow);
+    }
+    return board;
+}
+
+function clone2DArray(a) {
+    let clone = [];
+
+    for(let i = 0; i < a.length; i++){
+        clone.push(a[i].slice());
+    }
+    return clone;
+}
 
   
   // ========================================
