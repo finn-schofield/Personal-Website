@@ -20,8 +20,10 @@ ol, ul {
 .square {
   background: #fff;
   border: 1px solid #999;
+  border-radius: 1px;
   float: left;
   font-size: 24px;
+  font-weight: bold;
   line-height: 34px;
   height: 34px;
   margin-right: -1px;
@@ -34,16 +36,15 @@ ol, ul {
 }
 
 .square.permanent {
-  color: black;
-  font-weight: bold;
+  color: rgb(77, 77, 77);
 }
 
 .square.selected{
-  background: #ddd;
+  background: rgb(238, 238, 238);
 }
 
 .square.highlight {
-  background: rgb(171, 191, 209);
+  background: rgb(190, 212, 231);
 }
 
 .square:focus {
