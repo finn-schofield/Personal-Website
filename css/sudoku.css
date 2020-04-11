@@ -43,7 +43,7 @@ ol, ul {
 }
 
 .square.highlight {
-  background: rgb(216, 237, 255);
+  background: rgb(171, 191, 209);
 }
 
 .square:focus {

@@ -38,7 +38,7 @@ class Square extends React.Component {
         // let className = this.props.selected ? "square selected" : "square"
         let className = "square";
         if(this.props.selected) className += " selected";
-        else if(this.props.highlighted && this.props.value != null) className += " highlight";
+        else if(this.props.highlight && this.props.value != null) className += " highlight";
         if(this.props.permanent) className += " permanent";
         return (
             <button className={className} onClick={this.props.onClick}>
@@ -52,14 +52,14 @@ class Board extends React.Component {
 
     renderSquare(row, col) {
         let selected = false;
-        let highlighted = false;
+        let highlight = false;
         if(row == this.props.selected[0] && col == this.props.selected[1]) {
             selected = true;
         }
-        else if(this.props.selected[0] >= 0 && this.props.selected[1] >= 0 && 
+        else if(this.props.selected[0] >= 0 && this.props.selected[1] >= 0 && // check selected cell is valid
             (this.props.squares[this.props.selected[0]][this.props.selected[1]].value
-            == this.props.squares[row][col].value)){
-                highlighted = true;
+            == this.props.squares[row][col].value)){ 
+                highlight = true;
             }
         return (
             <Square
@@ -67,7 +67,7 @@ class Board extends React.Component {
                 permanent={this.props.squares[row][col].permanent}
                 onClick={() => this.props.onClick(row, col)}
                 selected={selected}
-                highlighted={highlighted}
+                highlight={highlight}
             />
         );
     }
@@ -132,6 +132,34 @@ class Game extends React.Component {
     }
 
     handleKeyPress(e) {
+
+        if(e.code.startsWith("Arrow")){
+            if(this.state.selected[0] < 0 || this.state.selected[1] < 0){
+                return;
+            } 
+            let currentRow = this.state.selected[0];
+            let currentCol = this.state.selected[1];
+            if(e.code == "ArrowUp"){
+                this.setState({
+                    selected: [Math.max(0,currentRow-1), currentCol]
+                });
+            }
+            if(e.code == "ArrowDown"){
+                this.setState({
+                    selected: [Math.min(8, currentRow+1), currentCol]
+                });
+            }
+            if(e.code == "ArrowLeft"){
+                this.setState({
+                    selected: [currentRow, Math.max(0, currentCol-1)]
+                });
+            }
+            if(e.code == "ArrowRight"){
+                this.setState({
+                    selected: [currentRow, Math.min(8, currentCol+1)]
+                });
+            }
+        }
         if(e.code.startsWith("Digit")){
             console.log(e.key)
             let num = e.key*1;
@@ -189,6 +217,14 @@ class Game extends React.Component {
     }
 }
 
+// code to disable scrolling page with arrow keys
+window.addEventListener("keydown", function(e) {
+    // space and arrow keys
+    if([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
+        e.preventDefault();
+    }
+}, false);
+
 function createBoard(values){
     let board = [];
     for(let row = 0; row < values.length; row++){
@@ -204,14 +240,6 @@ function createBoard(values){
     return board;
 }
 
-function clone2DArray(a) {
-    let clone = [];
-
-    for(let i = 0; i < a.length; i++){
-        clone.push(a[i].slice());
-    }
-    return clone;
-}
 
   
   // ========================================
