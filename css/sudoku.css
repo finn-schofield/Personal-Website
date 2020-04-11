@@ -33,7 +33,7 @@ body {
   }
 
   .square.selected{
-    background: #0ff
+    background: rgb(184, 221, 238)
   }
   
   .square:focus {
@@ -53,4 +53,13 @@ body {
   .game-info {
     margin-left: 20px;
   }
+
+.grid-container {
+  display: grid;
+  grid-template-columns: auto auto auto;
+}
+
+.grid-item {
+  border: 1px solid black;
+}
   

@@ -13,33 +13,39 @@ class Square extends React.Component {
 
 class Board extends React.Component {
 
-    renderSquare(i) {
+    renderSquare(row, col) {
+        let selected = false;
+        if(row == this.props.selected[0] && col == this.props.selected[1]) {
+            selected = true;
+        }
         return (
             <Square
-                value={this.props.squares[i]}
-                onClick={() => this.props.onClick(i)}
-                selected={this.props.selected == i}
+                value={this.props.squares[row][col] == 0 ? null : this.props.squares[row][col]}
+                onClick={() => this.props.onClick(row, col)}
+                selected={selected}
             />
         );
     }
 
     renderSegment(i) {
+        let topRow = Math.floor(i / 3) * 3;
+        let leftCol = (i - topRow) * 3;
         return (
-            <div>
+            <div className="grid-item">
                 <div className="board-row">
-                    {this.renderSquare(0)}
-                    {this.renderSquare(1)}
-                    {this.renderSquare(2)}
+                    {this.renderSquare(topRow+0,leftCol+0)}
+                    {this.renderSquare(topRow+0,leftCol+1)}
+                    {this.renderSquare(topRow+0,leftCol+2)}
                 </div>
                 <div className="board-row">
-                    {this.renderSquare(3)}
-                    {this.renderSquare(4)}
-                    {this.renderSquare(5)}
+                    {this.renderSquare(topRow+1,leftCol+0)}
+                    {this.renderSquare(topRow+1,leftCol+1)}
+                    {this.renderSquare(topRow+1,leftCol+2)}
                 </div>
                 <div className="board-row">
-                    {this.renderSquare(6)}
-                    {this.renderSquare(7)}
-                    {this.renderSquare(8)}
+                    {this.renderSquare(topRow+2,leftCol+0)}
+                    {this.renderSquare(topRow+2,leftCol+1)}
+                    {this.renderSquare(topRow+2,leftCol+2)}
                 </div>
             </div>
         );
@@ -47,23 +53,18 @@ class Board extends React.Component {
 
     render() {
         return (
-            <div>
-                <div className="board-row">
-                    {this.renderSegment(0)}
-                    {this.renderSegment(1)}
-                    {this.renderSegment(2)}
-                </div>
-                <div className="board-row">
-                    {this.renderSegment(3)}
-                    {this.renderSegment(4)}
-                    {this.renderSegment(5)}
-                </div>
-                <div className="board-row">
-                    {this.renderSegment(6)}
-                    {this.renderSegment(7)}
-                    {this.renderSegment(8)}
-                </div>
+            <div className="grid-container">
+                {this.renderSegment(0)}
+                {this.renderSegment(1)}
+                {this.renderSegment(2)}
+                {this.renderSegment(3)}
+                {this.renderSegment(4)}
+                {this.renderSegment(5)}
+                {this.renderSegment(6)}
+                {this.renderSegment(7)}
+                {this.renderSegment(8)}
             </div>
+            
         );
     }
 }
@@ -73,8 +74,8 @@ class Game extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            squares: Array(9).fill(null),
-            selected: -1,
+            squares: easy,
+            selected: [-1, -1],
         };
     }
 
@@ -83,7 +84,7 @@ class Game extends React.Component {
             console.log(e.key)
             let num = e.key*1;
             let squares = this.state.squares.slice();
-            squares[this.state.selected] = num;
+            squares[this.state.selected[0]][this.state.selected[1]] = num;
             this.setState({
                 squares: squares,
             });
@@ -92,11 +93,10 @@ class Game extends React.Component {
         
     }
 
-    handleClick(i) {
+    handleClick(row, col) {
         this.setState({
-            selected: i,
+            selected: [row, col],
         });
-        console.log("selected "+this.state.selected)
     }
 
     componentDidMount() {
@@ -113,7 +113,7 @@ class Game extends React.Component {
                 <div className="game-board">
                     <Board 
                         squares={this.state.squares}
-                        onClick={(i) => this.handleClick(i)}
+                        onClick={(row, col) => this.handleClick(row, col)}
                         selected={this.state.selected}
                     />
                 </div>
