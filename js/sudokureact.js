@@ -38,6 +38,7 @@ class Square extends React.Component {
         // let className = this.props.selected ? "square selected" : "square"
         let className = "square";
         if(this.props.selected) className += " selected";
+        else if(this.props.highlighted && this.props.value != null) className += " highlight";
         if(this.props.permanent) className += " permanent";
         return (
             <button className={className} onClick={this.props.onClick}>
@@ -51,15 +52,22 @@ class Board extends React.Component {
 
     renderSquare(row, col) {
         let selected = false;
+        let highlighted = false;
         if(row == this.props.selected[0] && col == this.props.selected[1]) {
             selected = true;
         }
+        else if(this.props.selected[0] >= 0 && this.props.selected[1] >= 0 && 
+            (this.props.squares[this.props.selected[0]][this.props.selected[1]].value
+            == this.props.squares[row][col].value)){
+                highlighted = true;
+            }
         return (
             <Square
                 value={this.props.squares[row][col].value == 0 ? null : this.props.squares[row][col].value}
                 permanent={this.props.squares[row][col].permanent}
                 onClick={() => this.props.onClick(row, col)}
                 selected={selected}
+                highlighted={highlighted}
             />
         );
     }
@@ -175,7 +183,7 @@ class Game extends React.Component {
                     />
                 </div>
                 <NumberButtons onClick={(i) => this.handleNumberButton(i)}/>
-                <button type="button" class="btn btn-light" onClick={() => this.restart()}>reset</button>
+                <button type="button" className="btn btn-light" onClick={() => this.restart()}>reset</button>
             </div>
         );
     }

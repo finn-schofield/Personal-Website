@@ -42,9 +42,14 @@ ol, ul {
   background: #ddd;
 }
 
+.square.highlight {
+  background: rgb(216, 237, 255);
+}
+
 .square:focus {
   outline: none;
 }
+
 
 .kbd-navigation .square:focus {
   
