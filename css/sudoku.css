@@ -46,13 +46,37 @@ body {
   }
   
   .game {
-    display: flex;
-    flex-direction: row;
+    display: inline-block;
   }
   
   .game-info {
     margin-left: 20px;
   }
+
+.game-board {
+  display: flex;
+}
+
+.number-buttons {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+  padding: 10px;
+  margin: 0 auto;
+}
+
+.number-button {
+  background: #fff;
+  border: 1px solid #999;
+  border-radius: 4px;
+  font-size: 24px;
+  font-weight: bold;
+  line-height: 34px;
+  height: 50px;
+  margin-top: -1px;
+  text-align: center;
+  width: 30px;
+}
 
 .grid-container {
   display: grid;

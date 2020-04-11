@@ -1,3 +1,36 @@
+class NumberButton extends React.Component {
+    render(){
+        return (
+            <button className="number-button" onClick={this.props.onClick} >
+                {this.props.value}
+            </button>
+        );
+    }
+}
+
+class NumberButtons extends React.Component {
+
+    renderButton(i) {
+        return <NumberButton value={i} onClick={() => this.props.onClick(i)}/>
+    }
+
+    render() {
+        return (
+            <div className="number-buttons">
+                {this.renderButton(1)}
+                {this.renderButton(2)}
+                {this.renderButton(3)}
+                {this.renderButton(4)}
+                {this.renderButton(5)}
+                {this.renderButton(6)}
+                {this.renderButton(7)}
+                {this.renderButton(8)}
+                {this.renderButton(9)}
+            </div>
+        );
+    }
+}
+
 
 class Square extends React.Component {
     
@@ -99,6 +132,16 @@ class Game extends React.Component {
         });
     }
 
+    handleNumberButton(i) {
+        if(this.state.selected[0] < 0 || this.state.selected[1] < 0) return;
+
+        let squares = this.state.squares.slice();
+        squares[this.state.selected[0]][this.state.selected[1]] = i;
+        this.setState({
+            squares: squares,
+        });
+    }
+
     componentDidMount() {
         document.addEventListener("keydown", (e) => {this.handleKeyPress(e)}, false);
     }
@@ -117,6 +160,7 @@ class Game extends React.Component {
                         selected={this.state.selected}
                     />
                 </div>
+                <NumberButtons onClick={(i) => this.handleNumberButton(i)}/>
             </div>
         );
     }
