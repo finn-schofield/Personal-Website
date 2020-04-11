@@ -47,6 +47,10 @@ ol, ul {
   background: rgb(190, 212, 231);
 }
 
+.square.error {
+  background: rgb(255, 91, 91);
+}
+
 .square:focus {
   outline: none;
 }

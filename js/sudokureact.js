@@ -37,7 +37,8 @@ class Square extends React.Component {
     render() {
         // let className = this.props.selected ? "square selected" : "square"
         let className = "square";
-        if(this.props.selected) className += " selected";
+        if(this.props.error) className += " error";
+        else if(this.props.selected) className += " selected";
         else if(this.props.highlight && this.props.value != null) className += " highlight";
         if(this.props.permanent) className += " permanent";
         return (
@@ -53,7 +54,12 @@ class Board extends React.Component {
     renderSquare(row, col) {
         let selected = false;
         let highlight = false;
-        if(row == this.props.selected[0] && col == this.props.selected[1]) {
+        let error = false;
+
+        if(this.props.errors.has(this.props.squares[row][col].value)){
+            error = true;
+        }
+        else if(row == this.props.selected[0] && col == this.props.selected[1]) {
             selected = true;
         }
         else if(this.props.selected[0] >= 0 && this.props.selected[1] >= 0 && // check selected cell is valid
@@ -61,6 +67,7 @@ class Board extends React.Component {
             == this.props.squares[row][col].value)){ 
                 highlight = true;
             }
+        
         return (
             <Square
                 value={this.props.squares[row][col].value == 0 ? null : this.props.squares[row][col].value}
@@ -68,6 +75,7 @@ class Board extends React.Component {
                 onClick={() => this.props.onClick(row, col)}
                 selected={selected}
                 highlight={highlight}
+                error={error}
             />
         );
     }
@@ -77,17 +85,17 @@ class Board extends React.Component {
         let leftCol = (i - topRow) * 3;
         return (
             <div className="grid-item">
-                <div className="board-row">
+                <div>
                     {this.renderSquare(topRow+0,leftCol+0)}
                     {this.renderSquare(topRow+0,leftCol+1)}
                     {this.renderSquare(topRow+0,leftCol+2)}
                 </div>
-                <div className="board-row">
+                <div>
                     {this.renderSquare(topRow+1,leftCol+0)}
                     {this.renderSquare(topRow+1,leftCol+1)}
                     {this.renderSquare(topRow+1,leftCol+2)}
                 </div>
-                <div className="board-row">
+                <div>
                     {this.renderSquare(topRow+2,leftCol+0)}
                     {this.renderSquare(topRow+2,leftCol+1)}
                     {this.renderSquare(topRow+2,leftCol+2)}
@@ -119,8 +127,11 @@ class Game extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            status: "",
             squares: createBoard(easy),
             selected: [-1, -1],
+            hasWon: false,
+            errors: new Set(),
         };
         console.log(this.state.squares);
     }
@@ -128,6 +139,7 @@ class Game extends React.Component {
     restart() {
         this.setState({
             squares: createBoard(easy),
+            errors: new Set(),
         });
     }
 
@@ -187,8 +199,10 @@ class Game extends React.Component {
         
         let squares = JSON.parse(JSON.stringify(this.state.squares))
         squares[row][col].value = newValue;
+        let errors = checkIfWon(squares);
         this.setState({
             squares: squares,
+            errors: errors,
         });
     }
 
@@ -208,10 +222,12 @@ class Game extends React.Component {
                         squares={this.state.squares}
                         onClick={(row, col) => this.handleClick(row, col)}
                         selected={this.state.selected}
+                        errors={this.state.errors}
                     />
                 </div>
                 <NumberButtons onClick={(i) => this.handleNumberButton(i)}/>
                 <button type="button" className="btn btn-light" onClick={() => this.restart()}>reset</button>
+                <a>{this.state.status}</a>
             </div>
         );
     }
@@ -224,6 +240,72 @@ window.addEventListener("keydown", function(e) {
         e.preventDefault();
     }
 }, false);
+
+function checkIfWon(squares){
+    let errors = new Set();
+    let emptyCells = false;
+
+    // check rows and columns for duplicates
+    for(let i = 0; i < 9; i++){
+        let rowValues = new Set();
+        let colValues = new Set();
+
+        for(let cell = 0; cell < 9; cell++){
+
+            //check row
+            if(squares[i][cell].value == 0){
+                emptyCells = true;
+            }
+            else if(rowValues.has(squares[i][cell].value)){
+                errors.add(squares[i][cell].value);
+            }
+            rowValues.add(squares[i][cell].value);
+
+
+            //check column
+            if(squares[cell][i].value == 0){
+                emptyCells = true;
+            }
+            else if(colValues.has(squares[cell][i].value)){
+                errors.add(squares[cell][i].value);
+            }
+            colValues.add(squares[cell][i].value);
+        }
+
+    }
+
+    // check 3x3 board segments from top left square for duplicates
+    emptyCells = emptyCells && checkSegment(0, 0, squares, errors);
+    emptyCells = emptyCells && checkSegment(0, 3, squares, errors);
+    emptyCells = emptyCells && checkSegment(0, 6, squares, errors);
+    emptyCells = emptyCells && checkSegment(3, 0, squares, errors);
+    emptyCells = emptyCells && checkSegment(3, 3, squares, errors);
+    emptyCells = emptyCells && checkSegment(3, 6, squares, errors);
+    emptyCells = emptyCells && checkSegment(6, 0, squares, errors);
+    emptyCells = emptyCells && checkSegment(6, 3, squares, errors);
+    emptyCells = emptyCells && checkSegment(6, 6, squares, errors);
+
+    return errors;
+
+}
+
+function checkSegment(row, col, squares, errors){
+    let values = new Set();
+    let emptyCells = false;
+
+    for(let i = 0; i < 3; i++){
+        for(let j = 0; j < 3; j++){
+            if(squares[row+i][col+j].value == 0){
+                emptyCells = true;
+            }
+            else if(values.has(squares[row+i][col+j].value)){
+                errors.add(squares[row+i][col+j].value);
+            }
+            values.add(squares[row+i][col+j].value);
+        }
+    }
+
+}
 
 function createBoard(values){
     let board = [];
