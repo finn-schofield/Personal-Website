@@ -14,7 +14,18 @@ ol, ul {
 }
 
 .status {
-  margin-bottom: 10px;
+  text-align: right;
+  margin-right: 15px;
+  margin-top: -15px;
+  font-size: 17px;
+}
+
+.btn-group.special {
+  display: flex;
+}
+
+.special .btn {
+  flex:1;
 }
 
 .square {
@@ -40,11 +51,16 @@ ol, ul {
 }
 
 .square.selected{
-  background: rgb(238, 238, 238);
+  background: rgb(190, 212, 231);
 }
 
 .square.highlight {
-  background: rgb(190, 212, 231);
+  background: rgb(223, 223, 223);
+  
+}
+
+.square.error {
+  background: rgb(255, 91, 91);
 }
 
 .square:focus {
@@ -68,7 +84,7 @@ ol, ul {
 }
 
 .game-board {
-  display: flex;
+  display: inline-block;
 }
 
 
