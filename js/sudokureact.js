@@ -1,7 +1,7 @@
 class NumberButton extends React.Component {
     render(){
         return (
-            <button className="btn btn-light" onClick={this.props.onClick} >
+            <button type="button" className="btn btn-light w-100" onClick={this.props.onClick} >
                 {this.props.value}
             </button>
         );
@@ -16,7 +16,7 @@ class NumberButtons extends React.Component {
 
     render() {
         return (
-            <div className="number-buttons">
+            <div className="btn-group d-flex" role="group">
                 {this.renderButton(1)}
                 {this.renderButton(2)}
                 {this.renderButton(3)}
@@ -31,11 +31,14 @@ class NumberButtons extends React.Component {
     }
 }
 
+class ControlPanel extends React.Component {
+
+}
+
 
 class Square extends React.Component {
     
     render() {
-        // let className = this.props.selected ? "square selected" : "square"
         let className = "square";
         if(this.props.error) className += " error";
         else if(this.props.selected) className += " selected";
@@ -138,12 +141,15 @@ class Game extends React.Component {
 
     restart() {
         this.setState({
+            stats: "",
             squares: createBoard(easy),
+            hasWon: false,
             errors: new Set(),
         });
     }
 
     handleKeyPress(e) {
+        
 
         if(e.code.startsWith("Arrow")){
             if(this.state.selected[0] < 0 || this.state.selected[1] < 0){
@@ -173,11 +179,14 @@ class Game extends React.Component {
             }
         }
         if(e.code.startsWith("Digit")){
-            console.log(e.key)
             let num = e.key*1;
             
             this.updateSquare(this.state.selected[0], this.state.selected[1], num);
 
+        }
+
+        if(e.code == "Backspace"){
+            this.updateSquare(this.state.selected[0], this.state.selected[1], 0);
         }
         
     }
@@ -199,24 +208,27 @@ class Game extends React.Component {
         
         let squares = JSON.parse(JSON.stringify(this.state.squares))
         squares[row][col].value = newValue;
-        let errors = checkIfWon(squares);
+        let gameEval = checkIfWon(squares);
+        let errors = gameEval.errors;
         this.setState({
             squares: squares,
             errors: errors,
+            hasWon: gameEval.hasWon,
         });
     }
 
     componentDidMount() {
-        document.addEventListener("keydown", (e) => {this.handleKeyPress(e)}, false);
+        document.addEventListener("keyup", (e) => {this.handleKeyPress(e)}, false);
     }
 
     componenetWillUnmount() {
-        document.removeEventListener("keydown", (e) => {this.handleKeyPress(e)}, false);
+        document.removeEventListener("keyup", (e) => {this.handleKeyPress(e)}, false);
     }
 
     render() {
         return (
             <div className="game">
+                <div className="status">{(this.state.hasWon ? "Completed!" : "") + "  Timer: 0"}</div>
                 <div className="game-board">
                     <Board 
                         squares={this.state.squares}
@@ -227,7 +239,8 @@ class Game extends React.Component {
                 </div>
                 <NumberButtons onClick={(i) => this.handleNumberButton(i)}/>
                 <button type="button" className="btn btn-light" onClick={() => this.restart()}>reset</button>
-                <a>{this.state.status}</a>
+                <button type="button" className="btn btn-light">undo</button>
+                
             </div>
         );
     }
@@ -274,31 +287,28 @@ function checkIfWon(squares){
 
     }
 
-    // check 3x3 board segments from top left square for duplicates
-    emptyCells = emptyCells && checkSegment(0, 0, squares, errors);
-    emptyCells = emptyCells && checkSegment(0, 3, squares, errors);
-    emptyCells = emptyCells && checkSegment(0, 6, squares, errors);
-    emptyCells = emptyCells && checkSegment(3, 0, squares, errors);
-    emptyCells = emptyCells && checkSegment(3, 3, squares, errors);
-    emptyCells = emptyCells && checkSegment(3, 6, squares, errors);
-    emptyCells = emptyCells && checkSegment(6, 0, squares, errors);
-    emptyCells = emptyCells && checkSegment(6, 3, squares, errors);
-    emptyCells = emptyCells && checkSegment(6, 6, squares, errors);
+    // check each of 3x3 board segments from top left cell
+    for(let i = 0; i < 9; i += 3){
+        for(let j = 0; j < 9; j += 3){
+            checkSegment(i, j, squares, errors);
+        }
+    }
 
-    return errors;
+    return {
+        errors: errors,
+        hasWon: !emptyCells && errors.size == 0, 
+    };
 
 }
 
 function checkSegment(row, col, squares, errors){
     let values = new Set();
-    let emptyCells = false;
 
     for(let i = 0; i < 3; i++){
         for(let j = 0; j < 3; j++){
-            if(squares[row+i][col+j].value == 0){
-                emptyCells = true;
-            }
-            else if(values.has(squares[row+i][col+j].value)){
+            if(squares[row+i][col+j].value == 0) continue;
+
+            if(values.has(squares[row+i][col+j].value)){
                 errors.add(squares[row+i][col+j].value);
             }
             values.add(squares[row+i][col+j].value);
