@@ -32,7 +32,21 @@ class NumberButtons extends React.Component {
 }
 
 class ControlPanel extends React.Component {
-
+    render() {
+        return( 
+            <div>
+                <NumberButtons onClick={(i) => this.props.handleNumberButton(i)}/>
+                <div className="btn-group d-flex" role="group">
+                    <button type="button" className="btn btn-light" onClick={() => this.props.restart()}>reset</button>
+                    <button type="button" className="btn btn-light" onClick={() => this.props.undo()}>undo</button>
+                    <button type="button" className="btn btn-light" data-toggle="button" aria-pressed="false" 
+                    onClick={()=>this.props.toggleErrors()}>
+                        show errors
+                    </button>
+                </div>
+            </div>
+        );
+    }
 }
 
 
@@ -165,6 +179,12 @@ class Game extends React.Component {
         
     }
 
+    toggleErrors() {
+        this.setState({
+            showErrors: !this.state.showErrors,
+        });
+    }
+
     handleKeyPress(e) {
         
 
@@ -263,13 +283,12 @@ class Game extends React.Component {
                         errors={this.state.showErrors? this.state.errors : new Set()}
                     />
                 </div>
-                <NumberButtons onClick={(i) => this.handleNumberButton(i)}/>
-                <button type="button" className="btn btn-light" onClick={() => this.restart()}>reset</button>
-                <button type="button" className="btn btn-light" onClick={() => this.undo()}>undo</button>
-                <button type="button" className="btn btn-light" data-toggle="button" aria-pressed="false" 
-                onClick={()=>this.setState({showErrors:!this.state.showErrors})}>
-                    show errors
-                </button>
+                <ControlPanel
+                    handleNumberButton={(i) => this.handleNumberButton(i)}
+                    restart={() => this.restart()}
+                    undo={() => this.undo()}
+                    toggleErrors={() => this.toggleErrors()}
+                />
                 
             </div>
         );
