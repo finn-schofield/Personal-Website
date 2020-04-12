@@ -223,7 +223,7 @@ class Game extends React.Component {
         });
 
         this.timer = setInterval(() => this.setState({
-            time: this.state.time+1
+            time: Math.min(999,this.state.time+1)
           }), 1000);
     }
 
@@ -283,7 +283,7 @@ class Game extends React.Component {
     }
 
     updateSquare(row, col, newValue){
-        if(this.state.squares[row][col].permanent) return;
+        if(this.state.squares[row][col].permanent || this.state.hasWon) return;
         
         let squares = JSON.parse(JSON.stringify(this.state.squares))
         let history = JSON.parse(JSON.stringify(this.state.history));
@@ -297,6 +297,10 @@ class Game extends React.Component {
 
         let gameEval = checkIfWon(squares);
         let errors = gameEval.errors;
+
+        // stop timer if game has been won
+        if(gameEval.hasWon) clearInterval(this.timer);
+
         this.setState({
             squares: squares,
             errors: errors,
@@ -316,7 +320,7 @@ class Game extends React.Component {
     render() {
         return (
             <div className="game">
-                <div className="status">{(this.state.hasWon ? "Completed!" : "") + "  Timer: "+this.state.time}</div>
+                <div className="status">{(this.state.hasWon ? "Completed!" : "") + "  Time: "+(this.state.time+"").padStart(3, "0")}</div>
                 <div className="game-board">
                     <Board 
                         squares={this.state.squares}
