@@ -131,6 +131,7 @@ class Game extends React.Component {
         super(props);
         this.state = {
             status: "",
+            showErrors: false,
             squares: createBoard(easy),
             selected: [-1, -1],
             hasWon: false,
@@ -259,12 +260,16 @@ class Game extends React.Component {
                         squares={this.state.squares}
                         onClick={(row, col) => this.handleClick(row, col)}
                         selected={this.state.selected}
-                        errors={this.state.errors}
+                        errors={this.state.showErrors? this.state.errors : new Set()}
                     />
                 </div>
                 <NumberButtons onClick={(i) => this.handleNumberButton(i)}/>
                 <button type="button" className="btn btn-light" onClick={() => this.restart()}>reset</button>
                 <button type="button" className="btn btn-light" onClick={() => this.undo()}>undo</button>
+                <button type="button" className="btn btn-light" data-toggle="button" aria-pressed="false" 
+                onClick={()=>this.setState({showErrors:!this.state.showErrors})}>
+                    show errors
+                </button>
                 
             </div>
         );
