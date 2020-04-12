@@ -162,7 +162,12 @@ class Game extends React.Component {
             hasWon: false,
             errors: new Set(),
             history: [],
+            time: 0,
+            start: 0,
         };
+        this.timer = setInterval(() => this.setState({
+            time: this.state.time+1
+          }), 1000);
     }
 
     newGame(difficulty) {
@@ -174,9 +179,11 @@ class Game extends React.Component {
             errors: new Set(),
             history: [],
         });
+        this.resetTimer();
     }
 
     restart() {
+        this.resetTimer();
         this.setState({
             stats: "",
             squares: createBoard(easy),
@@ -184,6 +191,7 @@ class Game extends React.Component {
             errors: new Set(),
             history: [],
         });
+        this.resetTimer();
     }
 
     undo() {
@@ -205,6 +213,18 @@ class Game extends React.Component {
         this.setState({
             showErrors: !this.state.showErrors,
         });
+    }
+
+    resetTimer() {
+        clearInterval(this.timer);
+        this.setState({
+            time: 0,
+            start: 0,
+        });
+
+        this.timer = setInterval(() => this.setState({
+            time: this.state.time+1
+          }), 1000);
     }
 
     handleKeyPress(e) {
@@ -296,7 +316,7 @@ class Game extends React.Component {
     render() {
         return (
             <div className="game">
-                <div className="status">{(this.state.hasWon ? "Completed!" : "") + "  Timer: 0"}</div>
+                <div className="status">{(this.state.hasWon ? "Completed!" : "") + "  Timer: "+this.state.time}</div>
                 <div className="game-board">
                     <Board 
                         squares={this.state.squares}
