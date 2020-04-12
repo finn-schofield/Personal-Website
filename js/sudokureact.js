@@ -152,12 +152,13 @@ class Game extends React.Component {
     undo() {
         if(this.state.history.length == 0) return;
         let history = JSON.parse(JSON.stringify(this.state.history));
-        let squares = JSON.parse(JSON.stringify(history[history.length-1]));
+        let update = history[history.length-1];
+        this.updateSquare(update.row, update.col, update.oldValue);
+        
         history = history.slice(0, history.length-1);
         
 
         this.setState({
-            squares: squares,
             history: history,
         });
         
@@ -223,8 +224,11 @@ class Game extends React.Component {
         
         let squares = JSON.parse(JSON.stringify(this.state.squares))
         let history = JSON.parse(JSON.stringify(this.state.history));
-        history.push(JSON.parse(JSON.stringify(squares)));
-        console.log(history);
+        history.push({
+            row: row,
+            col: col,
+            oldValue: this.state.squares[row][col].value,
+        });
         squares[row][col].value = newValue;
 
 
