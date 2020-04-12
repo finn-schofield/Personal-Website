@@ -34,9 +34,20 @@ class NumberButtons extends React.Component {
 class ControlPanel extends React.Component {
     render() {
         return( 
-            <div>
+            <div className="control-panel">
                 <NumberButtons onClick={(i) => this.props.handleNumberButton(i)}/>
-                <div className="btn-group d-flex" role="group">
+                <div className="btn-group d-flex control-panel" role="group" id="controls">
+                    <div className="dropdown">
+                        <button type="button" className="btn btn-light dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            new
+                        </button>
+                        <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <button className="dropdown-item" onClick={() => this.props.newGame(0)}>Easy</button>
+                            <button className="dropdown-item" onClick={() => this.props.newGame(1)}>Medium</button>
+                            <button className="dropdown-item" onClick={() => this.props.newGame(2)}>Hard</button>
+                        </div>
+                    </div>
+                    
                     <button type="button" className="btn btn-light" onClick={() => this.props.restart()}>reset</button>
                     <button type="button" className="btn btn-light" onClick={() => this.props.undo()}>undo</button>
                     <button type="button" className="btn btn-light" data-toggle="button" aria-pressed="false" 
@@ -152,6 +163,17 @@ class Game extends React.Component {
             errors: new Set(),
             history: [],
         };
+    }
+
+    newGame(difficulty) {
+        this.setState({
+            status: "",
+            squares: createBoard(easy),
+            selected: [-1, -1],
+            hasWon: false,
+            errors: new Set(),
+            history: [],
+        });
     }
 
     restart() {
@@ -285,6 +307,7 @@ class Game extends React.Component {
                 </div>
                 <ControlPanel
                     handleNumberButton={(i) => this.handleNumberButton(i)}
+                    newGame={() => this.newGame()}
                     restart={() => this.restart()}
                     undo={() => this.undo()}
                     toggleErrors={() => this.toggleErrors()}
