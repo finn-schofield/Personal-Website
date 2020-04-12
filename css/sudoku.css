@@ -16,6 +16,7 @@ ol, ul {
 .status {
   text-align: right;
   margin-right: 15px;
+  margin-top: -15px;
   font-size: 17px;
 }
 
@@ -50,11 +51,12 @@ ol, ul {
 }
 
 .square.selected{
-  background: rgb(238, 238, 238);
+  background: rgb(190, 212, 231);
 }
 
 .square.highlight {
-  background: rgb(190, 212, 231);
+  background: rgb(223, 223, 223);
+  
 }
 
 .square.error {

@@ -135,8 +135,8 @@ class Game extends React.Component {
             selected: [-1, -1],
             hasWon: false,
             errors: new Set(),
+            history: [],
         };
-        console.log(this.state.squares);
     }
 
     restart() {
@@ -145,7 +145,22 @@ class Game extends React.Component {
             squares: createBoard(easy),
             hasWon: false,
             errors: new Set(),
+            history: [],
         });
+    }
+
+    undo() {
+        if(this.state.history.length == 0) return;
+        let history = JSON.parse(JSON.stringify(this.state.history));
+        let squares = JSON.parse(JSON.stringify(history[history.length-1]));
+        history = history.slice(0, history.length-1);
+        
+
+        this.setState({
+            squares: squares,
+            history: history,
+        });
+        
     }
 
     handleKeyPress(e) {
@@ -207,22 +222,28 @@ class Game extends React.Component {
         if(this.state.squares[row][col].permanent) return;
         
         let squares = JSON.parse(JSON.stringify(this.state.squares))
+        let history = JSON.parse(JSON.stringify(this.state.history));
+        history.push(JSON.parse(JSON.stringify(squares)));
+        console.log(history);
         squares[row][col].value = newValue;
+
+
         let gameEval = checkIfWon(squares);
         let errors = gameEval.errors;
         this.setState({
             squares: squares,
             errors: errors,
             hasWon: gameEval.hasWon,
+            history: history
         });
     }
 
     componentDidMount() {
-        document.addEventListener("keyup", (e) => {this.handleKeyPress(e)}, false);
+        document.addEventListener("keydown", (e) => {this.handleKeyPress(e)}, false);
     }
 
     componenetWillUnmount() {
-        document.removeEventListener("keyup", (e) => {this.handleKeyPress(e)}, false);
+        document.removeEventListener("keydown", (e) => {this.handleKeyPress(e)}, false);
     }
 
     render() {
@@ -239,7 +260,7 @@ class Game extends React.Component {
                 </div>
                 <NumberButtons onClick={(i) => this.handleNumberButton(i)}/>
                 <button type="button" className="btn btn-light" onClick={() => this.restart()}>reset</button>
-                <button type="button" className="btn btn-light">undo</button>
+                <button type="button" className="btn btn-light" onClick={() => this.undo()}>undo</button>
                 
             </div>
         );
