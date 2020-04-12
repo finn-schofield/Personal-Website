@@ -32,7 +32,32 @@ class NumberButtons extends React.Component {
 }
 
 class ControlPanel extends React.Component {
-
+    render() {
+        return( 
+            <div className="control-panel">
+                <NumberButtons onClick={(i) => this.props.handleNumberButton(i)}/>
+                <div className="btn-group d-flex control-panel" role="group" id="controls">
+                    <div className="dropdown">
+                        <button type="button" className="btn btn-light dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            new
+                        </button>
+                        <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <button className="dropdown-item" onClick={() => this.props.newGame(0)}>Easy</button>
+                            <button className="dropdown-item" onClick={() => this.props.newGame(1)}>Medium</button>
+                            <button className="dropdown-item" onClick={() => this.props.newGame(2)}>Hard</button>
+                        </div>
+                    </div>
+                    
+                    <button type="button" className="btn btn-light" onClick={() => this.props.restart()}>reset</button>
+                    <button type="button" className="btn btn-light" onClick={() => this.props.undo()}>undo</button>
+                    <button type="button" className="btn btn-light" data-toggle="button" aria-pressed="false" 
+                    onClick={()=>this.props.toggleErrors()}>
+                        show errors
+                    </button>
+                </div>
+            </div>
+        );
+    }
 }
 
 
@@ -131,15 +156,34 @@ class Game extends React.Component {
         super(props);
         this.state = {
             status: "",
+            showErrors: false,
             squares: createBoard(easy),
             selected: [-1, -1],
             hasWon: false,
             errors: new Set(),
             history: [],
+            time: 0,
+            start: 0,
         };
+        this.timer = setInterval(() => this.setState({
+            time: this.state.time+1
+          }), 1000);
+    }
+
+    newGame(difficulty) {
+        this.setState({
+            status: "",
+            squares: createBoard(easy),
+            selected: [-1, -1],
+            hasWon: false,
+            errors: new Set(),
+            history: [],
+        });
+        this.resetTimer();
     }
 
     restart() {
+        this.resetTimer();
         this.setState({
             stats: "",
             squares: createBoard(easy),
@@ -147,6 +191,7 @@ class Game extends React.Component {
             errors: new Set(),
             history: [],
         });
+        this.resetTimer();
     }
 
     undo() {
@@ -162,6 +207,24 @@ class Game extends React.Component {
             history: history,
         });
         
+    }
+
+    toggleErrors() {
+        this.setState({
+            showErrors: !this.state.showErrors,
+        });
+    }
+
+    resetTimer() {
+        clearInterval(this.timer);
+        this.setState({
+            time: 0,
+            start: 0,
+        });
+
+        this.timer = setInterval(() => this.setState({
+            time: Math.min(999,this.state.time+1)
+          }), 1000);
     }
 
     handleKeyPress(e) {
@@ -220,7 +283,7 @@ class Game extends React.Component {
     }
 
     updateSquare(row, col, newValue){
-        if(this.state.squares[row][col].permanent) return;
+        if(this.state.squares[row][col].permanent || this.state.hasWon) return;
         
         let squares = JSON.parse(JSON.stringify(this.state.squares))
         let history = JSON.parse(JSON.stringify(this.state.history));
@@ -234,6 +297,10 @@ class Game extends React.Component {
 
         let gameEval = checkIfWon(squares);
         let errors = gameEval.errors;
+
+        // stop timer if game has been won
+        if(gameEval.hasWon) clearInterval(this.timer);
+
         this.setState({
             squares: squares,
             errors: errors,
@@ -253,18 +320,22 @@ class Game extends React.Component {
     render() {
         return (
             <div className="game">
-                <div className="status">{(this.state.hasWon ? "Completed!" : "") + "  Timer: 0"}</div>
+                <div className="status">{(this.state.hasWon ? "Completed!" : "") + "  Time: "+(this.state.time+"").padStart(3, "0")}</div>
                 <div className="game-board">
                     <Board 
                         squares={this.state.squares}
                         onClick={(row, col) => this.handleClick(row, col)}
                         selected={this.state.selected}
-                        errors={this.state.errors}
+                        errors={this.state.showErrors? this.state.errors : new Set()}
                     />
                 </div>
-                <NumberButtons onClick={(i) => this.handleNumberButton(i)}/>
-                <button type="button" className="btn btn-light" onClick={() => this.restart()}>reset</button>
-                <button type="button" className="btn btn-light" onClick={() => this.undo()}>undo</button>
+                <ControlPanel
+                    handleNumberButton={(i) => this.handleNumberButton(i)}
+                    newGame={() => this.newGame()}
+                    restart={() => this.restart()}
+                    undo={() => this.undo()}
+                    toggleErrors={() => this.toggleErrors()}
+                />
                 
             </div>
         );
